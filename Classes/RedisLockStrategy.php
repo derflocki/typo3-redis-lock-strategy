@@ -43,37 +43,37 @@ class RedisLockStrategy implements LockingStrategyInterface
     /**
      * @var \Redis A key-value data store
      */
-    private $redis;
+    protected $redis;
 
     /**
      * @var string The locking subject, i.e. a string to discriminate the lock
      */
-    private $subject;
+    protected $subject;
 
     /**
      * @var string The key used for the lock itself
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string The key used for the mutex
      */
-    private $mutex;
+    protected $mutex;
 
     /**
      * @var string The value used for the lock
      */
-    private $value;
+    protected $value;
 
     /**
      * @var boolean TRUE if lock is acquired by this locker
      */
-    private $isAcquired = false;
+    protected $isAcquired = false;
 
     /**
      * @var int Seconds the lock remains persistent
      */
-    private $ttl = 60;
+    protected $ttl = 60;
 
     /**
      * @inheritdoc
@@ -89,8 +89,9 @@ class RedisLockStrategy implements LockingStrategyInterface
             throw new LockCreateException('no configuration for redis lock strategy found');
         }
 
-        if (!\array_key_exists('host', $config)) {
-            throw new LockCreateException('no host for redis lock strategy found');
+        $host = '127.0.0.1';
+        if (\array_key_exists('host', $config)) {
+			$host = (string)$config['host'];
         }
 
         $port = 6379;
@@ -107,7 +108,7 @@ class RedisLockStrategy implements LockingStrategyInterface
         }
 
         $this->redis   = new \Redis();
-        $this->redis->connect($config['host'], $port);
+        $this->redis->connect($host, $port);
         if (\array_key_exists('auth', $config)) {
             $this->redis->auth($config['auth']);
         }
