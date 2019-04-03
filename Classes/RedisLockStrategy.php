@@ -118,6 +118,14 @@ class RedisLockStrategy implements LockingStrategyInterface
         $this->mutex = sprintf('lock:mutex:%s', $subject);
         $this->value = uniqid();
     }
+    /**
+     * Destructor:
+     * Releases lock automatically when instance is destroyed and release resources
+     */
+    public function __destruct()
+    {
+        $this->release();
+    }
 
     /**
      * @inheritdoc
